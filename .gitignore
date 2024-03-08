@@ -1,0 +1,6 @@
+/target
+*.db
+.env
+.vscode
+data.db-shm
+data.db-wal
