@@ -3,7 +3,6 @@ pub mod handlers;
 pub mod models;
 use dotenv::dotenv;
 use std::env;
-use std::error::Error;
 use sea_orm::Database;
 use crate::handlers::default_handler::hello;
 use crate::handlers::default_handler::echo;
@@ -13,6 +12,7 @@ use crate::handlers::contact_handler::contacts_store;
 use crate::handlers::contact_handler::contacts_update;
 use crate::handlers::contact_handler::contacts_destroy;
 use crate::handlers::upload_handler::upload_file;
+use actix_files::Files;
 
 
 
@@ -27,6 +27,8 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new( move || {
         App::new()
         .app_data(pool.clone())
+            // Serve individual image files from the "uploads" directory
+            .service(Files::new("/uploads", "uploads"))
             // Default routes
             .service(hello)
             .service(echo)

@@ -5,7 +5,7 @@ use sea_orm::prelude::Uuid;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
-use std::fs;
+use std::{env, fs};
 //use std::io::{self};
 
 
@@ -42,12 +42,14 @@ use std::fs;
 /// ```
 #[post("/upload_file")]
 async fn upload_file(mut payload: Multipart) -> Result<HttpResponse, Error> {
-
+            let app_url = env::var("APP_URL").expect("APP_URL must be set");
             let upload_dir = "uploads";
             let allowed_mime_types: Vec<(&str, &str)> = vec![
                 ("image/jpeg", "jpg"),
                 ("image/png", "png"),
             ];
+
+            let mut filepath:String = "".to_string();
 
             if !Path::new(upload_dir).exists() {
                 fs::create_dir(upload_dir).expect("Unable to create directory");
@@ -80,7 +82,7 @@ async fn upload_file(mut payload: Multipart) -> Result<HttpResponse, Error> {
             };
 
             let filename = format!("img_{}.{}", Uuid::new_v4(), ext);
-            let filepath = format!("{}/{}", upload_dir, filename);
+                filepath = format!("{}/{}", upload_dir, filename);
 
             // Create a file to save the uploaded content
             let mut file = match File::create(&filepath) {
@@ -98,5 +100,5 @@ async fn upload_file(mut payload: Multipart) -> Result<HttpResponse, Error> {
             }
         }
 
-    Ok(HttpResponse::Ok().body("File uploaded successfully"))
+    Ok(HttpResponse::Ok().body(format!("{}/{}", app_url, filepath)))
 }
