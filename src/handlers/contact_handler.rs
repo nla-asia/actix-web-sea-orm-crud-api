@@ -4,7 +4,7 @@ use sea_orm::DatabaseConnection;
 use crate::models::contact_model::Entity as ContactEntity;
 use crate::models::contact_model::ActiveModel as ContactActiveModel;
 use crate::models::contact_model::Model as ContactModel;
-
+use url::Url;
 use sea_orm::EntityTrait;
 use sea_orm::IntoActiveModel;
 use sea_orm::ActiveModelTrait;
@@ -47,12 +47,19 @@ async fn contacts_show(id: web::Path<i32>, pool: web::Data<DatabaseConnection>) 
 /// It accepts a JSON object of the contact data and returns a 201 status code upon successful creation.
 #[post("/contacts")]
 async fn contacts_store(form: web::Json<ContactModel>, pool: web::Data<DatabaseConnection>) -> impl Responder {
+    
+    let mut photo = None;
+    if form.photo.as_ref().and_then(|s| Url::parse(s).ok()).is_some() {
+        photo = form.photo.to_owned();
+    }
+
     ContactActiveModel {
         name: Set(form.name.to_owned()),
         email: Set(form.email.to_owned()),
         phone: Set(form.phone.to_owned()),
         address: Set(form.address.to_owned()),
         city: Set(form.city.to_owned()),
+        photo: Set(photo),
         ..Default::default()
     }
     .save(&pool)
@@ -74,6 +81,10 @@ async fn contacts_update(id: web::Path<i32>, form: web::Json<ContactModel>, pool
         contact.phone = Set(form.phone.to_owned());
         contact.address = Set(form.address.to_owned());
         contact.city = Set(form.city.to_owned());
+
+        if form.photo.as_ref().and_then(|s| Url::parse(s).ok()).is_some() {
+            contact.photo = Set(form.photo.to_owned());
+        }
     
         contact.update(&pool).await.unwrap();
 
