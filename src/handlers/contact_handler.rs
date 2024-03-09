@@ -1,6 +1,5 @@
-use actix_web::{get, post, put, delete, web, HttpResponse, Responder};
+use actix_web::{get, post, put, delete, web, HttpResponse, Responder, Error};
 use sea_orm::Set;
-use serde::Deserialize;
 use sea_orm::DatabaseConnection;
 use crate::models::contact_model::Entity as ContactEntity;
 use crate::models::contact_model::ActiveModel as ContactActiveModel;
@@ -9,6 +8,7 @@ use crate::models::contact_model::Model as ContactModel;
 use sea_orm::EntityTrait;
 use sea_orm::IntoActiveModel;
 use sea_orm::ActiveModelTrait;
+
 
 
 
@@ -94,5 +94,9 @@ async fn contacts_destroy(id: web::Path<i32>, pool: web::Data<DatabaseConnection
 
     HttpResponse::Ok().body("Contact Deleted.")
 }
+
+
+
+
 
 

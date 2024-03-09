@@ -13,4 +13,8 @@ dotenv = "0.15"
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.114"
+actix-multipart = "0.6.1"
+futures = "0.3.30"
+sanitize-filename = "0.5.0"
+uuid = "1.7.0"
 

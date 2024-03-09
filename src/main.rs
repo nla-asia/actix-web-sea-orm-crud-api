@@ -3,6 +3,7 @@ pub mod handlers;
 pub mod models;
 use dotenv::dotenv;
 use std::env;
+use std::error::Error;
 use sea_orm::Database;
 use crate::handlers::default_handler::hello;
 use crate::handlers::default_handler::echo;
@@ -11,6 +12,8 @@ use crate::handlers::contact_handler::contacts_show;
 use crate::handlers::contact_handler::contacts_store;
 use crate::handlers::contact_handler::contacts_update;
 use crate::handlers::contact_handler::contacts_destroy;
+use crate::handlers::upload_handler::upload_file;
+
 
 
 #[actix_web::main]
@@ -33,6 +36,8 @@ async fn main() -> std::io::Result<()> {
             .service(contacts_store)
             .service(contacts_update)
             .service(contacts_destroy)
+            // File upload route
+            .service(upload_file)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
